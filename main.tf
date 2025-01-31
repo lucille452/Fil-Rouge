@@ -33,16 +33,6 @@ resource "proxmox_vm_qemu" "resource-name" {
   name        = "VM-name"
   target_node = "PVE-Max"
 
-  disk {
-    ide {
-      ide2 {
-        cdrom {
-          iso = "ISO file"
-        }
-      }
-    }
-  }
-
   ### or for a Clone VM operation
   # clone = "template to clone"
 
