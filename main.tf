@@ -37,13 +37,13 @@ resource "proxmox_vm_qemu" "resource-name" {
     scsi {
       scsi0 {
         disk {
+          size = "32G"
           storage = "local"
         }
       }
     }
   }
 #  }
-
 
   ### or for a PXE boot VM operation
   # pxe = true
