@@ -32,7 +32,7 @@ provider "proxmox" {
 resource "proxmox_vm_qemu" "resource-name" {
   name        = "VM-name"
   target_node = "PVE-Max"
-  clone_id = 122
+  clone = "Terraform"
   #disks {
     #ide {
       #ide2 {
