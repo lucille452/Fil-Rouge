@@ -2,7 +2,7 @@ terraform {
   required_providers {
     proxmox = {
       source  = "Telmate/proxmox"
-      version = "2.9.14"
+      version = "3.0.1-rc4"
     }
   }
 }
@@ -32,6 +32,16 @@ provider "proxmox" {
 resource "proxmox_vm_qemu" "resource-name" {
   name        = "VM-name"
   target_node = "PVE-Max"
+
+  disks {
+    ide {
+      ide2 {
+        cdrom {
+          iso = "ISO file"
+        }
+      }
+    }
+  }
 
   ### or for a Clone VM operation
   # clone = "template to clone"
