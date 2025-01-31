@@ -32,19 +32,17 @@ provider "proxmox" {
 resource "proxmox_vm_qemu" "resource-name" {
   name        = "VM-name"
   target_node = "PVE-Max"
+  clone_id = 122
+  #disks {
+    #ide {
+      #ide2 {
+     #   cdrom {
+    #      iso = "ISO file"
+   #     }
+  #    }
+ #   }
+#  }
 
-  disks {
-    ide {
-      ide2 {
-        cdrom {
-          iso = "ISO file"
-        }
-      }
-    }
-  }
-
-  ### or for a Clone VM operation
-  # clone = "template to clone"
 
   ### or for a PXE boot VM operation
   # pxe = true
