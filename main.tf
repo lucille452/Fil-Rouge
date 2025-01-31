@@ -33,14 +33,15 @@ resource "proxmox_vm_qemu" "resource-name" {
   name        = "VM-name"
   target_node = "PVE-Max"
   clone = "Terraform"
-  #disks {
-    #ide {
-      #ide2 {
-     #   cdrom {
-    #      iso = "ISO file"
-   #     }
-  #    }
- #   }
+  disks {
+    scsi {
+      scsi0 {
+        disk {
+          storage = "local"
+        }
+      }
+    }
+  }
 #  }
 
 
