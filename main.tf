@@ -33,7 +33,7 @@ resource "proxmox_vm_qemu" "resource-name" {
   name        = "VM-name"
   target_node = "PVE-Max"
 
-  disks {
+  disk {
     ide {
       ide2 {
         cdrom {
