@@ -14,11 +14,30 @@ resource "proxmox_vm_qemu" "proxy_lb" {
   agent     = 1
   onboot    = true
   scsihw    = "virtio-scsi-pci"
+  boot      = "order=scsi0"
+  bootdisk  = "scsi0"
 
   ciuser     = "proxy-usr"
   cipassword = var.cloudinit_password
   ipconfig0  = "ip=192.168.10.100/24,gw=192.168.10.1"
   nameserver = "8.8.8.8"
+
+  disks {
+    scsi {
+      scsi0 {
+        clone {
+          storage = "local"
+        }
+      }
+    }
+    ide {
+      ide2 {
+        cloudinit {
+          storage = "local"
+        }
+      }
+    }
+  }
 
   network {
     model  = "virtio"
