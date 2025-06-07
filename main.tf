@@ -21,20 +21,21 @@ resource "proxmox_vm_qemu" "proxy_lb" {
   full_clone  = true
   os_type     = "cloud-init"
 
-  cores       = 2
-  sockets     = 1
-  cpu         = "host"
-  memory      = 2048
-  scsihw      = "virtio-scsi-pci"
-  boot        = "cdn"
-  bootdisk    = "scsi0"
-  agent       = 1
+  cores   = 2
+  sockets = 1
+  memory  = 2048
+  cpu     = "host"
+
+  scsihw   = "virtio-scsi-pci"
+  boot     = "cdn"
+  bootdisk = "scsi0"
+  agent    = 1
 
   disk {
-    slot     = 0
     type     = "scsi"
     storage  = "local"
     size     = "10G"
+    format   = "qcow2"
     iothread = true
   }
 
