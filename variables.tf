@@ -1,17 +1,21 @@
 variable "proxmox_api_url" {
-  description = "URL de l'API Proxmox"
+  type        = string
+  description = "Proxmox API URL"
 }
 
 variable "proxmox_api_token_id" {
-  description = "Token ID Proxmox (ex: root@pam!terraform)"
+  type        = string
+  description = "API token ID"
 }
 
 variable "proxmox_api_token_secret" {
-  description = "Clé secrète liée au token"
+  type        = string
+  description = "API token secret"
   sensitive   = true
 }
 
 variable "cloudinit_password" {
-  description = "Mot de passe du user ubuntu injecté via Cloud-Init"
+  type        = string
+  description = "Password for the cloud-init user"
   sensitive   = true
 }

@@ -26,7 +26,7 @@ resource "proxmox_vm_qemu" "proxy_lb" {
   disk {
     type    = "scsi"
     storage = "local"
-    size    = 10
+    size    = "10G"
   }
 
   network {
