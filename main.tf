@@ -3,6 +3,7 @@ resource "proxmox_vm_qemu" "proxy_lb" {
   clone       = "PROXY-LB"
   target_node = "PVE-Max"
   vmid = 120
+  full_clone = true
 
   cores   = 2
   sockets = 1
