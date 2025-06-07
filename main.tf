@@ -18,15 +18,24 @@ resource "proxmox_vm_qemu" "proxy_lb" {
   name        = "Proxy"
   target_node = "PVE-Max"
   clone       = "PROXY-LB"
+  full_clone  = true
   os_type     = "cloud-init"
 
-  cores  = 2
-  memory = 2048
+  cores       = 2
+  sockets     = 1
+  cpu         = "host"
+  memory      = 2048
+  scsihw      = "virtio-scsi-pci"
+  boot        = "cdn"
+  bootdisk    = "scsi0"
+  agent       = 1
 
   disk {
-    type    = "scsi"
-    storage = "local"
-    size    = "10G"
+    slot     = 0
+    type     = "scsi"
+    storage  = "local"
+    size     = "10G"
+    iothread = true
   }
 
   network {
@@ -34,13 +43,8 @@ resource "proxmox_vm_qemu" "proxy_lb" {
     bridge = "vmbr1"
   }
 
-  ipconfig0      = "ip=192.168.10.100/24,gw=192.168.10.1"
-  nameserver     = "8.8.8.8"
-  ciuser         = "ubuntu"
-  cipassword     = var.cloudinit_password
-  agent          = 1
-
-
-  boot     = "cdn"
-  bootdisk = "scsi0"
+  ipconfig0    = "ip=192.168.10.100/24,gw=192.168.10.1"
+  nameserver   = "8.8.8.8"
+  ciuser       = "ubuntu"
+  cipassword   = var.cloudinit_password
 }
