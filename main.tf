@@ -25,8 +25,9 @@ resource "proxmox_vm_qemu" "proxy_lb" {
   disks {
     scsi {
       scsi0 {
-        clone {
+        disk {
           storage = "local"
+          size    = "10G"
         }
       }
     }
