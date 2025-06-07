@@ -32,6 +32,7 @@ resource "proxmox_vm_qemu" "proxy_lb" {
   agent    = 1
 
   disk {
+    slot     = 0
     type     = "scsi"
     storage  = "local"
     size     = "10G"
