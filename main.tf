@@ -15,7 +15,7 @@ provider "proxmox" {
 }
 
 resource "proxmox_vm_qemu" "proxy_lb" {
-  name        = "proxy-lb"
+  name        = "Proxy"
   target_node = "PVE-Max"
   clone       = "proxy-lb"
   os_type     = "cloud-init"
@@ -34,12 +34,12 @@ resource "proxmox_vm_qemu" "proxy_lb" {
     bridge = "vmbr1"
   }
 
-  cloudinit {
-    user      = "BDD-usr"
-    password  = var.cloudinit_password
-    ipconfig0 = "ip=192.168.10.12/24,gw=192.168.10.1"
-    dns       = ["8.8.8.8"]
-  }
+  ipconfig0      = "ip=192.168.10.100/24,gw=192.168.10.1"
+  nameserver     = "8.8.8.8"
+  ciuser         = "ubuntu"
+  cipassword     = var.cloudinit_password
+  agent          = 1
+
 
   boot     = "cdn"
   bootdisk = "scsi0"
