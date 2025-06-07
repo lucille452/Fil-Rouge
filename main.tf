@@ -36,7 +36,7 @@ resource "proxmox_vm_qemu" "proxy_lb" {
     storage  = "local"
     size     = "10G"
     format   = "qcow2"
-    iothread = true
+    iothread = 1
   }
 
   network {
