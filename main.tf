@@ -17,7 +17,7 @@ provider "proxmox" {
 resource "proxmox_vm_qemu" "proxy_lb" {
   name        = "Proxy"
   target_node = "PVE-Max"
-  clone       = "proxy-lb"
+  clone       = "PROXY-LB"
   os_type     = "cloud-init"
 
   cores  = 2
