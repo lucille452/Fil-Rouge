@@ -5,7 +5,7 @@ resource "proxmox_vm_qemu" "proxy_lb" {
   full_clone  = true
   vmid        = 120
 
-  cores   = 2
+  cores   = 4
   sockets = 1
   memory  = 2048
   cpu     = "host"
