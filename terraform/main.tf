@@ -1,5 +1,6 @@
 resource "proxmox_vm_qemu" "proxy_lb" {
-  name        = "Proxy-test"
+  for_each = local.vm
+  name        = each.key
   target_node = "PVE-Max"
   clone       = "PROXY-LB"
   full_clone  = true
@@ -17,9 +18,9 @@ resource "proxmox_vm_qemu" "proxy_lb" {
   boot      = "order=scsi0"
   bootdisk  = "scsi0"
 
-  ciuser     = "proxy-usr"
+  ciuser     = each.value.username
   cipassword = var.cloudinit_password
-  ipconfig0  = "ip=192.168.10.100/24,gw=192.168.10.1"
+  ipconfig0  = each.value.ip
   nameserver = "8.8.8.8"
 
   disks {
