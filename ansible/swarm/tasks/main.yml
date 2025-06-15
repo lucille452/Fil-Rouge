@@ -1,0 +1,21 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for swarm
+
+# manager :
+- name: Initialize Swarm
+  command: docker swarm init --advertise-addr {{ ansible_host }}
+  when: inventory_hostname == groups['manager'][0]
+  register: swarm_init_result
+  changed_when: "'Error' not in swarm_init_result.stderr"
+
+- name: Get worker join token
+  command: docker swarm join-token -q worker
+  when: inventory_hostname == groups['manager'][0]
+  register: worker_join_token
+  changed_when: "false"
+
+# workers :
+- name: Join swarm
+  command: docker swarm join --token {{ hostvars[groups['manager'][0]]['worker_join_token'].stdout }} {{ hostvars[groups['manager'][0]]['ansible_host'] }}:2377
+  when: inventory_hostname in groups['workers']

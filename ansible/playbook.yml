@@ -4,3 +4,10 @@
   become: yes
   roles:
     - docker
+
+
+- name: Initialize Docker Swarm
+  hosts: manager:workers
+  become: yes
+  roles:
+    - swarm
