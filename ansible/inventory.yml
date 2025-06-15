@@ -1,13 +1,8 @@
-[hosts]
-  web1-srv ansible_host=192.168.10.11 ansible_user=web1-usr ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
-  web2-srv ansible_host=192.168.10.13 ansible_user=web2-usr ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
-  proxy-srv ansible_host=192.168.10.12 ansible_user=proxy-usr ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
-  bdd-srv ansible_host=192.168.10.14 ansible_user=bdd-usr ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
-  monit-srv ansible_host=192.168.10.15 ansible_user=monit-usr ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
-
 [manager]
   web1-srv ansible_host=192.168.10.11 ansible_user=web1-usr ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
 
 [workers]
   web2-srv ansible_host=192.168.10.13 ansible_user=web2-usr ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
   proxy-srv ansible_host=192.168.10.12 ansible_user=proxy-usr ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
+  bdd-srv ansible_host=192.168.10.14 ansible_user=bdd-usr ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
+  monit-srv ansible_host=192.168.10.15 ansible_user=monit-usr ansible_port=22 ansible_ssh_private_key_file=~/.ssh/id_ed25519
