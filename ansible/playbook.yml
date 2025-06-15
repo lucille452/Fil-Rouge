@@ -1,0 +1,6 @@
+---
+- name: Installation de Docker sur les VM
+  hosts: hosts
+  become: yes
+  roles:
+    - docker
