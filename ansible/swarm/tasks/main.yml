@@ -1,0 +1,45 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for swarm
+
+- name: Check if the node is already part of a swarm
+  command: docker info -f '{{ "{{ .Swarm.LocalNodeState }}" }}'
+  register: swarm_state
+  changed_when: false
+  failed_when: false
+
+- name: Initialize the swarm if not already initialized
+  command: docker swarm init --advertise-addr {{ ansible_host }}
+  when: swarm_state.stdout != 'active' and inventory_hostname in groups['manager']
+  register: swarm_init
+  changed_when: "'Swarm initialized' in swarm_init.stdout"
+
+- name: Get worker join token from the manager
+  command: docker swarm join-token -q worker
+  when: inventory_hostname in groups['manager']
+  register: swarm_worker_token
+  changed_when: false
+
+- name: Set worker join token fact
+  set_fact:
+    worker_join_token: "{{ hostvars[groups['manager'][0]].swarm_worker_token.stdout }}"
+  when: inventory_hostname in groups['workers']
+
+- name: Check if worker node is already part of a swarm
+  command: docker info -f '{{ "{{ .Swarm.LocalNodeState }}" }}'
+  register: worker_swarm_state
+  changed_when: false
+  failed_when: false
+  when: inventory_hostname in groups['workers']
+
+- name: Join the worker node to the swarm if not already part of it
+  command: >
+    docker swarm join
+    --token {{ worker_join_token }}
+    {{ hostvars[groups['manager'][0]].ansible_host }}:2377
+  when:
+    - inventory_hostname in groups['workers']
+    - worker_swarm_state.stdout != 'active'
+  register: join_result
+  changed_when: "'This node joined a swarm as a worker' in join_result.stdout"
+
