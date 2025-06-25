@@ -1,6 +1,6 @@
 ---
 - name: Installation de Docker sur les VM
-  hosts: all
+  hosts: manager:workers
   become: yes
   roles:
     - docker
@@ -11,4 +11,3 @@
   become: yes
   roles:
     - swarm
-
