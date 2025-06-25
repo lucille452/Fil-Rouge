@@ -17,3 +17,9 @@
   become: yes
   roles:
     - traefik
+
+- name: Déployer Prometheus sur le Swarm
+  hosts: manager:workers
+  become: yes
+  roles:
+      - prometheus

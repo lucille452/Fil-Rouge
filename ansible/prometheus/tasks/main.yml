@@ -1,3 +1,68 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for prometheus
+
+- name: Installer le module docker pour Python (via apt)
+  ansible.builtin.package:
+    name: python3-docker
+    state: present
+
+- name: Créer le dossier /etc/prometheus sur le noeud de monitoring
+  ansible.builtin.file:
+    path: /etc/prometheus
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  when: ansible_hostname == 'monit-srv'
+
+- name: Créer le dossier /prometheus sur le noeud de monitoring
+  ansible.builtin.file:
+    path: /prometheus
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  when: ansible_hostname == 'monit-srv'
+
+- name: Copier le fichier prometheus.yml sur le noeud de monitoring
+  ansible.builtin.copy:
+    src: prometheus.yml
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_hostname == 'monit-srv'
+
+- name: Corriger les droits sur /prometheus pour Prometheus
+  ansible.builtin.file:
+    path: /prometheus
+    owner: 65534
+    group: 65534
+    recurse: yes
+    mode: '0775'
+  when: ansible_hostname == 'monit-srv'
+
+- name: Déployer Prometheus sur un worker spécifique avec Swarm
+  community.docker.docker_swarm_service:
+    name: prometheus
+    image: prom/prometheus:latest
+    publish:
+      - target_port: 9090
+        published_port: 9090
+        protocol: tcp
+        mode: host
+    mounts:
+      - source: /etc/prometheus
+        target: /etc/prometheus
+        type: bind
+      - source: /prometheus
+        target: /prometheus
+        type: bind
+    placement:
+      constraints:
+        - node.hostname == monit-srv
+    restart_config:
+      condition: any
+    state: present
+  when: "'manager' in group_names"
