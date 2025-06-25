@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  {{ service_name }}:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: {{ image_name }}:{{ image_tag | default('latest') }}
+    container_name: {{ container_name }}
+    ports:
+      - "{{ host_port }}:{{ container_port }}"
+    networks:
+      - {{ network_name }}
+    volumes:
+{% for volume in volumes | default([]) %}
+      - {{ volume }}
+{% endfor %}
+    environment:
+{% for key, value in environment | default({}).items() %}
+      {{ key }}: {{ value }}
+{% endfor %}
+    deploy:
+      replicas: {{ replicas | default(1) }}
+      placement:
+        constraints:
+{% if target_host is defined %}
+          - node.hostname == {{ target_host }}
+{% else %}
+          - node.role == {{ node_role | default('worker') }}
+{% endif %}
+
+networks:
+  {{ network_name }}:
+    external: true

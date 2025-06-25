@@ -11,3 +11,23 @@
   become: yes
   roles:
     - swarm
+
+- name: Deploy Nginx on web1
+  hosts: manager
+  become: yes
+  roles:
+    - role: nginx
+      vars:
+        service_name: "nginx-web1"
+        target_host: "web1-srv"
+        host_port: "80"
+
+- name: Deploy Nginx on web2
+  hosts: manager
+  become: yes
+  roles:
+    - role: nginx
+      vars:
+        service_name: "nginx-web2"
+        target_host: "web2-srv"
+        host_port: "8080"
