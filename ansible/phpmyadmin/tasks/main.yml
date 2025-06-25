@@ -1,3 +1,23 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for phpmyadmin
+
+- name: Create phpMyAdmin Docker service
+  docker_swarm_service:
+    name: phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    publish:
+      - target_port: 80
+        published_port: 8082
+    env:
+      PMA_HOST: db
+      PMA_PORT: "3306"
+    restart_config:
+      condition: any
+    update_config:
+      parallelism: 1
+      delay: 10s
+    placement:
+      constraints:
+        - node.hostname == bdd-srv
+  when: "'manager' in group_names"

@@ -29,3 +29,10 @@
   become: yes
   roles:
     - grafana
+
+- name: Déployer phpmyadmin dans le swarm
+  hosts: manager:workers
+  become: yes
+  roles:
+    - phpmyadmin
+
