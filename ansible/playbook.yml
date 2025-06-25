@@ -36,3 +36,8 @@
   roles:
     - phpmyadmin
 
+- name: Deploy NGINX in Docker Swarm
+  hosts: manager:workers
+  become: true
+  roles:
+    - nginx
