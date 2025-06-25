@@ -1,3 +1,47 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for traefik
+- name: Installer pip3
+  ansible.builtin.package:
+    name: python3-pip
+    state: present
+
+- name: Installer le module docker pour Python (via apt)
+  ansible.builtin.package:
+    name: python3-docker
+    state: present
+
+- name: Déployer Traefik sur un worker spécifique avec Swarm
+  community.docker.docker_swarm_service:
+    name: traefik
+    image: traefik:v2.10
+    args:
+      - "--providers.docker"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--api.insecure=true"
+    publish:
+      - target_port: 80
+        published_port: 80
+        protocol: tcp
+        mode: host
+      - target_port: 443
+        published_port: 443
+        protocol: tcp
+        mode: host
+      - target_port: 8080
+        published_port: 8080
+        protocol: tcp
+        mode: host
+    mounts:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+    placement:
+      constraints:
+        - node.hostname == proxy-srv
+    restart_config:
+      condition: any
+    state: present
+  when:
+    - ansible_hostname == 'repair-srv'

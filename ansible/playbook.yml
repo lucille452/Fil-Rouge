@@ -11,3 +11,9 @@
   become: yes
   roles:
     - swarm
+
+- name: Déployer Traefik sur le Swarm
+  hosts: manager:workers
+  become: yes
+  roles:
+    - traefik
