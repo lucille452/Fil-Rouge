@@ -1,3 +1,38 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for grafana
+
+- name: Installer le module docker pour Python (via apt)
+  ansible.builtin.package:
+    name: python3-docker
+    state: present
+
+- name: Créer le dossier /grafana sur le noeud de monitoring
+  ansible.builtin.file:
+    path: /grafana
+    state: directory
+    owner: 472
+    group: 472
+    mode: '0775'
+  when: ansible_hostname == 'monit-srv'
+
+- name: Déployer Grafana sur un worker spécifique avec Swarm
+  community.docker.docker_swarm_service:
+    name: grafana
+    image: grafana/grafana:latest
+    publish:
+      - target_port: 3000
+        published_port: 3000
+        protocol: tcp
+        mode: host
+    mounts:
+      - source: /grafana
+        target: /var/lib/grafana
+        type: bind
+    placement:
+      constraints:
+        - node.hostname == monit-srv
+    restart_config:
+      condition: any
+    state: present
+  when: "'manager' in group_names"

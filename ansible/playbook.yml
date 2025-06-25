@@ -23,3 +23,9 @@
   become: yes
   roles:
       - prometheus
+
+- name: Déployer Grafana sur le serveur de monitoring
+  hosts: manager:workers
+  become: yes
+  roles:
+    - grafana
