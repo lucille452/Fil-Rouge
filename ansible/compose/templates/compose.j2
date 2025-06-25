@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+{% for service in services %}
+  {{ service.name }}:
+    image: {{ service.image }}
+    {% if service.ports is defined %}
+    ports:
+      {% for port in service.ports %}
+      - "{{ port }}"
+      {% endfor %}
+    {% endif %}
+    {% if service.environment is defined %}
+    environment:
+      {% for key, value in service.environment.items() %}
+      {{ key }}: "{{ value }}"
+      {% endfor %}
+    {% endif %}
+{% endfor %}
