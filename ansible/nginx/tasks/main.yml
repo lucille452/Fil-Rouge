@@ -7,7 +7,7 @@
 - name: Create NGINX Docker service
   community.docker.docker_swarm_service:
     name: nginx
-    image: nginx:alpine
+    image: nginxdemos/hello
     publish:
       - target_port: 80
         published_port: 88
