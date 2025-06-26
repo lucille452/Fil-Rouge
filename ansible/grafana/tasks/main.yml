@@ -41,4 +41,8 @@
     restart_config:
       condition: any
     state: present
+    env:
+      GF_SECURITY_ADMIN_USER: "admin"
+      GF_SECURITY_ADMIN_PASSWORD: "Passw0rd"
   when: "'manager' in group_names"
+

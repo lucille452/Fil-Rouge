@@ -16,6 +16,8 @@
     env:
       PMA_HOST: db
       PMA_PORT: "3306"
+      PMA_USER: "Admin-usr"
+      PMA_PASSWORD: "Passw0rd"
     labels:
       traefik.enable: "true"
       traefik.http.routers.phpmyadmin.rule: "Host(`phpmyadmin.test`)"
