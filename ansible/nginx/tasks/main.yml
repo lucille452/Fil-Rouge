@@ -1,6 +1,6 @@
 - name: Kill existing service
   ansible.builtin.shell: |
-    docker service rm nginx
+    docker service ls | grep nginx && docker service rm nginx || true
   when: "'manager' in group_names"
 
 - name: Tag web hosts
@@ -8,14 +8,17 @@
     docker node update --label-add role=web web1-srv
     docker node update --label-add role=web web2-srv
   when: "'manager' in group_names"
-
 - name: Create NGINX Docker service
   community.docker.docker_swarm_service:
     name: nginx
     image: nginxdemos/hello
-    publish:
-      - target_port: 80
-        published_port: 88
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.nginx.rule: "Host(`nginx.localhost`)"
+      traefik.http.routers.nginx.entrypoints: "web"
+      traefik.http.services.nginx.loadbalancer.server.port: "80"
+    networks:
+      - traefik-net
     mode: replicated
     replicas: 2
     restart_config:

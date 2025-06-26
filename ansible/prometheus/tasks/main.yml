@@ -3,7 +3,7 @@
 # tasks file for prometheus
 - name: Kill existing service
   ansible.builtin.shell: |
-    docker service rm prometheus
+    docker service ls | grep prometheus && docker service rm prometheus || true
   when: "'manager' in group_names"
 
 - name: Installer le module docker pour Python (via apt)
@@ -51,11 +51,13 @@
   community.docker.docker_swarm_service:
     name: prometheus
     image: prom/prometheus:latest
-    publish:
-      - target_port: 9090
-        published_port: 9090
-        protocol: tcp
-        mode: host
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.prometheus.rule: "Host(`prometheus.localhost`)"
+      traefik.http.routers.prometheus.entrypoints: "web"
+      traefik.http.services.prometheus.loadbalancer.server.port: "9090"
+    networks:
+      - traefik-net
     mounts:
       - source: /etc/prometheus
         target: /etc/prometheus

@@ -3,7 +3,7 @@
 # tasks file for grafana
 - name: Kill existing service
   ansible.builtin.shell: |
-    docker service rm grafana
+    docker service ls | grep grafana && docker service rm grafana || true
   when: "'manager' in group_names"
 
 - name: Installer le module docker pour Python (via apt)
@@ -24,11 +24,13 @@
   community.docker.docker_swarm_service:
     name: grafana
     image: grafana/grafana:latest
-    publish:
-      - target_port: 3000
-        published_port: 3000
-        protocol: tcp
-        mode: host
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.grafana.rule: "Host(`grafana.localhost`)"
+      traefik.http.routers.grafana.entrypoints: "web"
+      traefik.http.services.grafana.loadbalancer.server.port: "3000"
+    networks:
+      - traefik-net
     mounts:
       - source: /grafana
         target: /var/lib/grafana

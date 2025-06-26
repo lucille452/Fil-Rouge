@@ -3,7 +3,7 @@
 # tasks file for phpmyadmin
 - name: Kill existing service
   ansible.builtin.shell: |
-    docker service rm phpmyadmin
+    docker service ls | grep phpmyadmin && docker service rm phpmyadmin || true
   when: "'manager' in group_names"
 
 - name: Create phpMyAdmin Docker service
@@ -21,6 +21,8 @@
       traefik.http.routers.phpmyadmin.rule: "Host(`phpmyadmin.localhost`)"
       traefik.http.routers.phpmyadmin.entrypoints: "web"
       traefik.http.services.phpmyadmin.loadbalancer.server.port: "80"
+    networks:
+      - traefik-net
     restart_config:
       condition: any
     update_config:

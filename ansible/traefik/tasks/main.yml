@@ -13,7 +13,14 @@
 
 - name: Kill existing service
   ansible.builtin.shell: |
-    docker service rm traefik
+    docker service ls | grep traefik && docker service rm traefik || true
+  when: "'manager' in group_names"
+
+- name: Créer le réseau overlay traefik-net
+  community.docker.docker_network:
+    name: traefik-net
+    driver: overlay
+    attachable: yes
   when: "'manager' in group_names"
 
 - name: Déployer Traefik sur un worker spécifique avec Swarm
@@ -22,6 +29,8 @@
     image: traefik:v2.10
     args:
       - "--providers.docker"
+      - "--providers.docker.swarmMode=true"
+      - "--providers.docker.network=traefik-net"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--api.insecure=true"
@@ -43,11 +52,12 @@
       - source: /var/run/docker.sock
         target: /var/run/docker.sock
         type: bind
+    networks:
+      - traefik-net
     placement:
       constraints:
         - node.hostname == proxy-srv
     restart_config:
       condition: any
     state: present
-  when:
-    - ansible_hostname == 'repair-srv'
+  when: "'manager' in group_names"
