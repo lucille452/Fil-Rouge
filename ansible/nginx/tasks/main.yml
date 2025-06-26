@@ -1,3 +1,8 @@
+- name: Kill existing service
+  ansible.builtin.shell: |
+    docker service rm nginx
+  when: "'manager' in group_names"
+
 - name: Tag web hosts
   ansible.builtin.shell: |
     docker node update --label-add role=web web1-srv

@@ -11,6 +11,11 @@
     name: python3-docker
     state: present
 
+- name: Kill existing service
+  ansible.builtin.shell: |
+    docker service rm traefik
+  when: "'manager' in group_names"
+
 - name: Déployer Traefik sur un worker spécifique avec Swarm
   community.docker.docker_swarm_service:
     name: traefik
@@ -20,6 +25,7 @@
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--api.insecure=true"
+      - "--metrics.prometheus=true"
     publish:
       - target_port: 80
         published_port: 80

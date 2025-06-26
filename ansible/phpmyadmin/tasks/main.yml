@@ -1,6 +1,10 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for phpmyadmin
+- name: Kill existing service
+  ansible.builtin.shell: |
+    docker service rm phpmyadmin
+  when: "'manager' in group_names"
 
 - name: Create phpMyAdmin Docker service
   docker_swarm_service:
