@@ -53,7 +53,7 @@
     image: prom/prometheus:latest
     labels:
       traefik.enable: "true"
-      traefik.http.routers.prometheus.rule: "Host(`prometheus.localhost`)"
+      traefik.http.routers.prometheus.rule: "Host(`prometheus.test`)"
       traefik.http.routers.prometheus.entrypoints: "web"
       traefik.http.services.prometheus.loadbalancer.server.port: "9090"
     networks:

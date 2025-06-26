@@ -18,7 +18,7 @@
       PMA_PORT: "3306"
     labels:
       traefik.enable: "true"
-      traefik.http.routers.phpmyadmin.rule: "Host(`phpmyadmin.localhost`)"
+      traefik.http.routers.phpmyadmin.rule: "Host(`phpmyadmin.test`)"
       traefik.http.routers.phpmyadmin.entrypoints: "web"
       traefik.http.services.phpmyadmin.loadbalancer.server.port: "80"
     networks:
