@@ -11,6 +11,12 @@
     name: python3-docker
     state: present
 
+- name: Supprimer le dossier /grafana
+  ansible.builtin.file:
+    path: /grafana
+    state: absent
+  when: ansible_hostname == 'monit-srv'
+
 - name: Créer le dossier /grafana sur le noeud de monitoring
   ansible.builtin.file:
     path: /grafana
