@@ -20,6 +20,24 @@
     mode: '0775'
   when: ansible_hostname == 'monit-srv'
 
+- name: Créer le dossier de provisioning des datasources Grafana
+  ansible.builtin.file:
+    path: /etc/grafana/provisioning/datasources
+    state: directory
+    owner: 472
+    group: 472
+    mode: '0755'
+  when: ansible_hostname == 'monit-srv'
+
+- name: Provisionner la datasource Prometheus dans Grafana
+  ansible.builtin.copy:
+    src: prometheus-datasource.yml
+    dest: /etc/grafana/provisioning/datasources/prometheus.yml
+    owner: 472
+    group: 472
+    mode: '0644'
+  when: ansible_hostname == 'monit-srv'
+
 - name: Déployer Grafana sur un worker spécifique avec Swarm
   community.docker.docker_swarm_service:
     name: grafana
@@ -35,6 +53,9 @@
       - source: /grafana
         target: /var/lib/grafana
         type: bind
+      - source: /etc/grafana/provisioning/datasources
+        target: /etc/grafana/provisioning/datasources
+        type: bind
     placement:
       constraints:
         - node.hostname == monit-srv
@@ -45,4 +66,3 @@
       GF_SECURITY_ADMIN_USER: "admin"
       GF_SECURITY_ADMIN_PASSWORD: "Passw0rd"
   when: "'manager' in group_names"
-
