@@ -44,6 +44,48 @@
     mode: '0644'
   when: ansible_hostname == 'monit-srv'
 
+- name: Créer le dossier de provisioning des dashboards Grafana
+  ansible.builtin.file:
+    path: /etc/grafana/provisioning/dashboards
+    state: directory
+    owner: 472
+    group: 472
+    mode: '0755'
+  when: ansible_hostname == 'monit-srv'
+
+- name: Copier le dashboard Traefik (ID 4475)
+  ansible.builtin.get_url:
+    url: https://grafana.com/api/dashboards/4475/revisions/5/download
+    dest: /etc/grafana/provisioning/dashboards/traefik-dashboard.json
+    mode: '0644'
+  when: ansible_hostname == 'monit-srv'
+
+- name: Ajouter la référence à la datasource dans le dashboard Traefik
+  ansible.builtin.replace:
+    path: /etc/grafana/provisioning/dashboards/traefik-dashboard.json
+    regexp: '\$\{DS_PROMETHEUS\}'
+    replace: 'PBFA97CFB590B2093'
+  when: ansible_hostname == 'monit-srv'
+
+- name: Provisionner le dashboard Traefik dans Grafana
+  ansible.builtin.copy:
+    content: |
+      apiVersion: 1
+      providers:
+        - name: 'traefik-dashboards'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /etc/grafana/provisioning/dashboards
+    dest: /etc/grafana/provisioning/dashboards/traefik-provider.yml
+    owner: 472
+    group: 472
+    mode: '0644'
+  when: ansible_hostname == 'monit-srv'
+
 - name: Déployer Grafana sur un worker spécifique avec Swarm
   community.docker.docker_swarm_service:
     name: grafana
@@ -61,6 +103,9 @@
         type: bind
       - source: /etc/grafana/provisioning/datasources
         target: /etc/grafana/provisioning/datasources
+        type: bind
+      - source: /etc/grafana/provisioning/dashboards
+        target: /etc/grafana/provisioning/dashboards
         type: bind
     placement:
       constraints:
