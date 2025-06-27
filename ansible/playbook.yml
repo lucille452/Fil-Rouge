@@ -30,11 +30,11 @@
   roles:
     - grafana
 
-- name: Déployer phpmyadmin dans le swarm
+- name: Déployer mysql dans le swarm
   hosts: manager:workers
   become: yes
   roles:
-    - phpmyadmin
+    - bdd
 
 - name: Deploy NGINX in Docker Swarm
   hosts: manager:workers

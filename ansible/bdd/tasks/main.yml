@@ -1,3 +1,29 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for bdd
+- name: Kill existing service
+  ansible.builtin.shell: |
+    docker service ls | grep mysql && docker service rm mysql || true
+  when: "'manager' in group_names"
+
+- name: Déployer Mysql sur un worker spécifique avec Swarm
+  community.docker.docker_swarm_service:
+    name: mysql
+    image: mysql:latest
+    env:
+      MYSQL_ROOT_PASSWORD: Password123
+      MYSQL_DATABASE: bdd
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    publish:
+      - target_port: 3306
+        published_port: 3306
+    networks:
+      - traefik-net
+    placement:
+      constraints:
+        - node.hostname == bdd-srv
+    restart_config:
+      condition: any
+    state: present
+  when: "'manager' in group_names"
