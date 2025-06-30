@@ -1,12 +1,18 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT-0
 ---
 # tasks file for bdd
-- name: Kill existing service
+
+- name: Stop existing MySQL service if it exists
   ansible.builtin.shell: |
-    docker service ls | grep mysql && docker service rm mysql || true
+    docker service ls | grep -q mysql && docker service rm mysql || true
   when: "'manager' in group_names"
 
-- name: Déployer Mysql sur un worker spécifique avec Swarm
+- name: Stop existing MySQL service if it exists
+  ansible.builtin.shell: |
+    docker service ls | grep -q mysql && docker service rm mysql-exporter || true
+  when: "'manager' in group_names"
+
+- name: Deploy MySQL service on a specific Swarm worker
   community.docker.docker_swarm_service:
     name: mysql
     image: mysql:latest
@@ -20,6 +26,29 @@
         published_port: 3306
     networks:
       - traefik-net
+    placement:
+      constraints:
+        - node.hostname == bdd-srv
+    restart_config:
+      condition: any
+    state: present
+  when: "'manager' in group_names"
+
+- name: Deploy MySQL Exporter
+  community.docker.docker_swarm_service:
+    name: mysql-exporter
+    image: prom/mysqld-exporter:latest
+    command: "/bin/mysqld_exporter --mysqld.address=mysql:3306 --mysqld.username=root"
+    env:
+      MYSQLD_EXPORTER_PASSWORD: "Password123"
+      DATA_SOURCE_NAME: "root:Password123@(bdd-srv:3306)/bdd"
+    networks:
+      - traefik-net
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.mysql-exporter.rule: "Host(`mysql.test`)"
+      traefik.http.routers.mysql-exporter.entrypoints: "web"
+      traefik.http.services.mysql-exporter.loadbalancer.server.port: "9104"
     placement:
       constraints:
         - node.hostname == bdd-srv

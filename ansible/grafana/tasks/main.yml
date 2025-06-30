@@ -93,6 +93,38 @@
     mode: '0644'
   when: ansible_hostname == 'monit-srv'
 
+- name: Copier le dashboard mysql (ID 14057)
+  ansible.builtin.get_url:
+    url: https://grafana.com/api/dashboards/14057/revisions/1/download
+    dest: /etc/grafana/provisioning/dashboards/mysql-dashboard.json
+    mode: '0644'
+  when: ansible_hostname == 'monit-srv'
+
+- name: Ajouter la référence à la datasource dans le dashboard Mysql
+  ansible.builtin.replace:
+    path: /etc/grafana/provisioning/dashboards/mysql-dashboard.json
+    regexp: ''
+  when: ansible_hostname == 'monit-srv'
+
+- name: Provisionner le dashboard Mysql dans Grafana
+  ansible.builtin.copy:
+    content: |
+      apiVersion: 1
+      providers:
+        - name: 'mysql-dashboards'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /etc/grafana/provisioning/dashboards
+    dest: /etc/grafana/provisioning/dashboards/mysql-provider.yml
+    owner: 472
+    group: 472
+    mode: '0644'
+  when: ansible_hostname == 'monit-srv'
+
 - name: Déployer Grafana sur un worker spécifique avec Swarm
   community.docker.docker_swarm_service:
     name: grafana
