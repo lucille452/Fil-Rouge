@@ -21,7 +21,7 @@ resource "proxmox_vm_qemu" "proxy_lb" {
   ciuser     = each.value.username
   cipassword = var.cloudinit_password
   ipconfig0  = each.value.ip
-  sshkeys = "./ssh.txt"
+  sshkeys = file("./ssh.txt")
   nameserver = "8.8.8.8"
 
   disks {
