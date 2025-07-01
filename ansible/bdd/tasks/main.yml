@@ -41,7 +41,7 @@
     command: "/bin/mysqld_exporter --mysqld.address=mysql:3306 --mysqld.username=root"
     env:
       MYSQLD_EXPORTER_PASSWORD: "Password123"
-      DATA_SOURCE_NAME: "root:Password123@(bdd-srv:3306)/bdd"
+      DATA_SOURCE_NAME: "root:Password123@(bdd-srv:3306)/bdd" # je ne sais pas si c'est utile
     networks:
       - traefik-net
     labels:

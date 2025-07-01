@@ -1,0 +1,2 @@
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAghLU7ztc8Mbo4aiN40zlGFSeq79IFW7T58vzLmfoFf max@MacBook-Pro-de-Maxence.local
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINFOY+lcmJzzg3/+WusX/T101kQmk4IakXYAzWCyE1RN repair-usr@repair-srv
